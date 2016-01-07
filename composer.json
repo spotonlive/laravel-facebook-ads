@@ -1,0 +1,40 @@
+{
+  "name": "nikolajlovenhardt/laravel-facebook",
+  "type": "library",
+  "description": "Facebook integration for Laravel",
+  "keywords": [
+    "laravel",
+    "ads",
+    "facebook"
+  ],
+  "homepage": "https://github.com/nikolajlovenhardt/laravel-facebook-ads",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nikolaj Petersen",
+      "email": "nikolaj.lovenhardt@gmail.com",
+      "homepage": "http://github.com/nikolajlovenhardt"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.0",
+    "laravel/framework": "5.*",
+    "facebook/php-ads-sdk": "~2.5.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "codeclimate/php-test-reporter": "dev-master",
+    "phpmd/phpmd" : "1.4.*",
+    "mockery/mockery": "~0.9.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "LaravelFacebookAds\\": "src/LaravelFacebookAds"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelFacebookAdsTests\\": "tests/"
+    }
+  }
+}
