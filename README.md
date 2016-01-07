@@ -16,6 +16,41 @@ This package is an integration of [`facebook/facebook-php-ads-sdk`](https://gith
 ],
 ```
 
+- Add facade
+```php
+'facades' => [
+    'FacebookAds' => LaravelFacebookAds\Facades\FacebookAds::class,
+],
+```
+
+### Usage
+
+#### Dependency injection
+```php
+use LaravelFacebookAds\Services\FacebookAdsService;
+
+class Controller
+{
+    /** @var FacebookAdsService */
+    protected $facebookAdsService;
+
+    public function __construct(FacebookAdsService $facebookAdsService)
+    {
+        $this->facebookAdsService = $facebookAdsService;
+    }
+
+    public function example()
+    {
+        $facebookInstance = $this->facebookAdsService->instance();
+    }
+}
+```
+
+#### Facade
+```php
+FacebookAds::instance()
+```
+
 - Run `$ php artisan vendor:publish` to publish the configuration file `config/facebook-ads.php`
 
 ### Dependencies

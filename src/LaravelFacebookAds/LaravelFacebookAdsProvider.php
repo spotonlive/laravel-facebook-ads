@@ -2,7 +2,11 @@
 
 namespace LaravelFacebookAds;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use LaravelFacebookAds\Exceptions\MissingConfigurationException;
+use LaravelFacebookAds\Options\ModuleOptions;
+use LaravelFacebookAds\Services\FacebookAdsService;
 
 class LaravelFacebookAdsProvider extends ServiceProvider
 {
@@ -22,6 +26,7 @@ class LaravelFacebookAdsProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfig();
+        $this->registerServices();
     }
 
     /**
@@ -33,5 +38,22 @@ class LaravelFacebookAdsProvider extends ServiceProvider
             __DIR__ . '/../../config/config.php',
             'facebook-ads'
         );
+    }
+
+    /**
+     * Register services
+     */
+    protected function registerServices()
+    {
+        // Facebook ads service
+        $this->app->bind(FacebookAdsService::class, function (Application $app) {
+            if (!$config = config('facebook-ads')) {
+                throw new MissingConfigurationException();
+            }
+
+            $moduleOptions = new ModuleOptions($config);
+
+            return new FacebookAdsService($moduleOptions);
+        });
     }
 }
