@@ -38,6 +38,11 @@ class LaravelFacebookAdsProvider extends ServiceProvider
             __DIR__ . '/../../config/config.php',
             'facebook-ads'
         );
+
+        // Register command
+        $this->commands([
+            Console\GenerateTokenCommand::class,
+        ]);
     }
 
     /**

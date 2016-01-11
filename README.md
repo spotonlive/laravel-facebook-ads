@@ -16,8 +16,6 @@ This package is an integration of [`facebook/facebook-php-ads-sdk`](https://gith
 ],
 ```
 
-- Run `$ php artisan vendor:publish` to publish the configuration file `config/facebook-ads.php`
-
 - Add facade
 ```php
 'facades' => [
@@ -52,6 +50,8 @@ class Controller
 ```php
 FacebookAds::instance()
 ```
+
+- Run `$ php artisan vendor:publish` to publish the configuration file `config/facebook-ads.php`
 
 ### Dependencies
 - [`facebook/facebook-php-ads-sdk`](https://github.com/facebook/facebook-php-ads-sdk)

@@ -101,6 +101,53 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
+     * Get account list
+     *
+     * @return Account[]|array
+     * @throws InvalidAccountConfigurationException
+     * @throws InvalidAccountException
+     */
+    public function getAccountList()
+    {
+        $options = $this->getOptions();
+        $accounts = $options->get('accounts');
+
+        $accountList = [];
+
+        foreach ($accounts as $name => $accountData) {
+            $account = $this->getAccount($name);
+            $accountList[$name] = $account;
+        }
+
+        return $accountList;
+    }
+
+    /**
+     * Generate access token
+     *
+     * @param Account $account
+     * @return bool|string
+     */
+    public function generateToken(Account $account)
+    {
+        $token = file_get_contents(
+            sprintf(
+                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials',
+                $account->getAppId(),
+                $account->getAppSecret()
+            )
+        );
+
+        if (!substr_count($token, 'access_token=')) {
+            return false;
+        }
+
+        $token = str_replace('access_token=', '', $token);
+
+        return $token;
+    }
+
+    /**
      * Get options
      *
      * @return OptionsInterface

@@ -16,11 +16,11 @@ class Account
     /**
      * Construct
      *
-     * @param string $appId
-     * @param string $appSecret
-     * @param string|null $token
+     * @param $appId
+     * @param $appSecret
+     * @param $token
      */
-    public function __construct($appId, $appSecret, $token = null)
+    public function __construct($appId, $appSecret, $token)
     {
         $this->appId = $appId;
         $this->appSecret = $appSecret;
