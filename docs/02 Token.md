@@ -1,6 +1,13 @@
-# Generate token
+# Token
 
 You'll need to generate an access token to access the facebook ads api.
+
+## Access limits
+
+- See https://developers.facebook.com/docs/marketing-api/access#limits
+
+## Generate token
+
 You can generate a token with the console command:
 
 1. Run `$ php artisan facebookads:token:generate`
