@@ -6,52 +6,10 @@
 
 This package is an integration of [`facebook/facebook-php-ads-sdk`](https://github.com/facebook/facebook-php-ads-sdk) in Laravel 5.*.
 
-### Setup
+### Composer
 - Run `$ composer require nikolajlovenhardt/laravel-facebook-ads`
 
-- Add provider
-```php
-'providers' => [
-    LaravelFacebookAds\LaravelFacebookAdsProvider::class,
-],
-```
-
-- Add facade
-```php
-'facades' => [
-    'FacebookAds' => LaravelFacebookAds\Facades\FacebookAds::class,
-],
-```
-
-### Usage
-
-#### Dependency injection
-```php
-use LaravelFacebookAds\Services\FacebookAdsService;
-
-class Controller
-{
-    /** @var FacebookAdsService */
-    protected $facebookAdsService;
-
-    public function __construct(FacebookAdsService $facebookAdsService)
-    {
-        $this->facebookAdsService = $facebookAdsService;
-    }
-
-    public function example()
-    {
-        $facebookInstance = $this->facebookAdsService->instance();
-    }
-}
-```
-
-#### Facade
-```php
-FacebookAds::instance()
-```
-
-- Run `$ php artisan vendor:publish` to publish the configuration file `config/facebook-ads.php`
-
-### Dependencies
-- [`facebook/facebook-php-ads-sdk`](https://github.com/facebook/facebook-php-ads-sdk)
+## Documentation
+- [01 Getting started](docs/01 Getting started.md)
+- [02 Generate token](docs/02 Token.md)
+- [03 Usage](docs/03 Usage.md)
