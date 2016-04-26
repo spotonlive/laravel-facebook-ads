@@ -7,6 +7,13 @@ return [
     'default' => 'default',
 
     /*
+     * Developer mode must be on in order to obtain new user access tokens
+     *
+     * default: false
+     */
+    'developer_mode' => false,
+
+    /*
      * Facebook accounts
      */
     'accounts' => [
@@ -20,7 +27,7 @@ return [
             'redirectUri' => 'http://spotonlive.dev/',
 
             /*
-             * App or user token
+             * Your app- or user access token
              */
             'token' => '',
         ],

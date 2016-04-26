@@ -6,7 +6,21 @@ class ModuleOptions extends Options
 {
     /** @var array */
     protected $defaults = [
-        'default' => null,
+        /*
+         * Default facebook ad account
+         */
+        'default' => 'default',
+
+        /*
+         * Developer mode must be on in order to obtain new user access tokens
+         *
+         * default: false
+         */
+        'developer_mode' => false,
+
+        /*
+         * Facebook accounts
+         */
         'accounts' => [],
     ];
 }

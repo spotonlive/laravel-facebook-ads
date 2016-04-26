@@ -5,6 +5,7 @@ namespace LaravelFacebookAds;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use LaravelFacebookAds\Exceptions\MissingConfigurationException;
+use LaravelFacebookAds\Http\Controllers\TokenController;
 use LaravelFacebookAds\Options\ModuleOptions;
 use LaravelFacebookAds\Services\FacebookAdsService;
 
@@ -37,6 +38,7 @@ class LaravelFacebookAdsProvider extends ServiceProvider
     {
         $this->mergeConfig();
         $this->registerServices();
+        $this->registerControllers();
     }
 
     /**
@@ -61,15 +63,39 @@ class LaravelFacebookAdsProvider extends ServiceProvider
      */
     protected function registerServices()
     {
-        // Facebook ads service
-        $this->app->bind(FacebookAdsService::class, function (Application $app) {
-            if (!$config = config('facebook-ads')) {
-                throw new MissingConfigurationException();
-            }
-
-            $moduleOptions = new ModuleOptions($config);
-
-            return new FacebookAdsService($moduleOptions);
+        /*
+         * Service: \LaravelFacebookAds\Services\FacebookAdsService
+         */
+        $this->app->bind(FacebookAdsService::class, function () {
+            return new FacebookAdsService($this->getModuleOptions());
         });
+    }
+
+    /**
+     * Register controllers
+     */
+    protected function registerControllers()
+    {
+        /*
+         * Service: \LaravelFacebookAds\Http\Controllers\TokenController
+         */
+        $this->app->bind(TokenController::class, function () {
+            return new TokenController($this->getModuleOptions());
+        });
+    }
+
+    /**
+     * Get module options
+     *
+     * @return ModuleOptions
+     * @throws MissingConfigurationException
+     */
+    protected function getModuleOptions()
+    {
+        if (!$config = config('facebook-ads')) {
+            throw new MissingConfigurationException();
+        }
+
+        return new ModuleOptions($config);
     }
 }
