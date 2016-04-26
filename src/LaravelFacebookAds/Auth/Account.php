@@ -2,7 +2,7 @@
 
 namespace LaravelFacebookAds\Auth;
 
-class Account
+class Account implements AccountInterface
 {
     /** @var string */
     protected $appId;
@@ -13,18 +13,23 @@ class Account
     /** @var string */
     protected $token;
 
+    /** @var string */
+    protected $redirectUri;
+
     /**
      * Construct
      *
-     * @param $appId
-     * @param $appSecret
-     * @param $token
+     * @param string $appId
+     * @param string $appSecret
+     * @param string $token
+     * @param string $redirectUri
      */
-    public function __construct($appId, $appSecret, $token)
+    public function __construct($appId, $appSecret, $token, $redirectUri)
     {
         $this->appId = $appId;
         $this->appSecret = $appSecret;
         $this->token = $token;
+        $this->redirectUri = $redirectUri;
     }
 
     /**
@@ -73,5 +78,21 @@ class Account
     public function setToken($token)
     {
         $this->token = $token;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * @param string $redirectUri
+     */
+    public function setRedirectUri($redirectUri)
+    {
+        $this->redirectUri = $redirectUri;
     }
 }

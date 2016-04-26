@@ -18,6 +18,16 @@ class LaravelFacebookAdsProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../config/config.php' => config_path('facebook-ads.php'),
         ]);
+
+        $this->loadViewsFrom(
+            __DIR__ . '/../../resources/views',
+            'fb-token'
+        );
+
+        // Routes
+        if (! $this->app->routesAreCached()) {
+            require __DIR__ . '/Http/routes.php';
+        }
     }
 
     /**
@@ -41,7 +51,8 @@ class LaravelFacebookAdsProvider extends ServiceProvider
 
         // Register command
         $this->commands([
-            Console\GenerateTokenCommand::class,
+            Console\App\GenerateTokenCommand::class,
+            Console\User\GenerateTokenCommand::class,
         ]);
     }
 

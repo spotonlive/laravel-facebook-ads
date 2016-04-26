@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFacebookAds\Console;
+namespace LaravelFacebookAds\Console\User;
 
 use Exception;
 use Illuminate\Console\Command;
@@ -13,14 +13,14 @@ class GenerateTokenCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'facebookads:token:generate';
+    protected $signature = 'facebookads:user:generate-token';
 
     /**
      * Description
      *
      * @var string
      */
-    protected $description = 'Generate a new refresh token for Facebook Ads';
+    protected $description = 'Generate a new app refresh token for Facebook Ads';
 
     /**
      * Fire command
@@ -71,19 +71,10 @@ class GenerateTokenCommand extends Command
             $selectedAccount = $accounts[$accountId];
         }
 
-        // Generate token
-        $token = $facebookAdsService->generateToken($selectedAccount);
+        // Generate token url
+        $url = $facebookAdsService->generateUserTokenUrl($selectedAccount);
 
-        // Error fetching the access token
-        if (!$token) {
-            $this->error('Something went wrong while fetching the access token');
-            return false;
-        }
-
-        // Success
-        $this->line(sprintf(
-            'Access token: %s',
-            $token
-        ));
+        $this->line('Open the following url in your browser, and copy the access token into your config:');
+        $this->line($url);
     }
 }

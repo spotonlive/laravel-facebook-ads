@@ -13,6 +13,9 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     /** @var OptionsInterface */
     protected $moduleOptions;
 
+    /** @var string */
+    protected $scope = 'ads_management';
+
     public function __construct(OptionsInterface $moduleOptions)
     {
         $this->moduleOptions = $moduleOptions;
@@ -89,14 +92,20 @@ class FacebookAdsService implements FacebookAdsServiceInterface
 
         $account = $accounts[$name];
 
-        if (!isset($account['appId']) || !isset($account['appSecret']) || !isset($account['token'])) {
+        if (
+            !isset($account['appId']) ||
+            !isset($account['appSecret']) ||
+            !isset($account['token']) ||
+            !isset($account['redirectUri'])
+        ) {
             throw new InvalidAccountConfigurationException($name);
         }
 
         return new Account(
             $account['appId'],
             $account['appSecret'],
-            $account['token']
+            $account['token'],
+            $account['redirectUri']
         );
     }
 
@@ -123,13 +132,29 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
-     * Generate access token
+     * Generate facebook user token url
+     *
+     * @param Account $account
+     * @return string
+     */
+    public function generateUserTokenUrl(Account $account)
+    {
+        return sprintf(
+            'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=ads_management&response_type=token',
+            $account->getAppId(),
+            $account->getRedirectUri() . 'fb-token'
+        );
+    }
+
+    /**
+     * Generate access token (app)
      *
      * @param Account $account
      * @return bool|string
      */
-    public function generateToken(Account $account)
+    public function generateAppToken(Account $account)
     {
+
         $token = file_get_contents(
             sprintf(
                 'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials',
@@ -155,5 +180,21 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     protected function getOptions()
     {
         return $this->moduleOptions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
     }
 }
