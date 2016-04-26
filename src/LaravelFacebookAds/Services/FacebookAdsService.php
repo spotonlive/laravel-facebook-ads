@@ -4,6 +4,7 @@ namespace LaravelFacebookAds\Services;
 
 use FacebookAds\Api;
 use LaravelFacebookAds\Auth\Account;
+use LaravelFacebookAds\Auth\AccountInterface;
 use LaravelFacebookAds\Options\OptionsInterface;
 use LaravelFacebookAds\Exceptions\InvalidAccountException;
 use LaravelFacebookAds\Exceptions\InvalidAccountConfigurationException;
@@ -30,9 +31,7 @@ class FacebookAdsService implements FacebookAdsServiceInterface
      */
     public function instance($accountName = null)
     {
-        /*
-         * Select default account if no account is present
-         */
+        // Select default account if no account is present
         if (!$accountName) {
             $accountName = $this->getDefaultAccount();
         }
@@ -47,7 +46,7 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
-     * Get new Facebook API instance from auth information
+     * Authenticate & initiate
      *
      * @param string $appId
      * @param string $appSecret
@@ -62,16 +61,96 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
-     * Get default account
+     * Get account list
+     *
+     * @return AccountInterface[]|array
+     * @throws InvalidAccountConfigurationException
+     * @throws InvalidAccountException
+     */
+    public function getAccountList()
+    {
+        $options = $this->getOptions();
+        $accounts = $options->get('accounts');
+
+        $accountList = [];
+
+        foreach ($accounts as $name => $accountData) {
+            $account = $this->getAccount($name);
+            $accountList[$name] = $account;
+        }
+
+        return $accountList;
+    }
+
+    /**
+     * Generate facebook user token url
+     *
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function generateUserTokenUrl(AccountInterface $account)
+    {
+        return sprintf(
+            'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=ads_management&response_type=token',
+            $account->getAppId(),
+            $account->getRedirectUri() . 'fb-token'
+        );
+    }
+
+    /**
+     * Generate access token (app)
+     *
+     * @param AccountInterface $account
+     * @return bool|string
+     */
+    public function generateAppToken(AccountInterface $account)
+    {
+
+        $token = file_get_contents(
+            sprintf(
+                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials',
+                $account->getAppId(),
+                $account->getAppSecret()
+            )
+        );
+
+        if (!substr_count($token, 'access_token=')) {
+            return false;
+        }
+
+        $token = str_replace('access_token=', '', $token);
+
+        return $token;
+    }
+
+    /**
+     * Get options
+     *
+     * @return OptionsInterface
+     */
+    protected function getOptions()
+    {
+        return $this->moduleOptions;
+    }
+
+    /**
+     * Get scope for user access token
      *
      * @return string
      */
-    protected function getDefaultAccount()
+    public function getScope()
     {
-        $options = $this->getOptions();
-        $account = $options->get('default');
+        return $this->scope;
+    }
 
-        return $account;
+    /**
+     * Set scope for user access token
+     *
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
     }
 
     /**
@@ -110,91 +189,15 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
-     * Get account list
+     * Get default account
      *
-     * @return Account[]|array
-     * @throws InvalidAccountConfigurationException
-     * @throws InvalidAccountException
+     * @return string
      */
-    public function getAccountList()
+    protected function getDefaultAccount()
     {
         $options = $this->getOptions();
-        $accounts = $options->get('accounts');
+        $account = $options->get('default');
 
-        $accountList = [];
-
-        foreach ($accounts as $name => $accountData) {
-            $account = $this->getAccount($name);
-            $accountList[$name] = $account;
-        }
-
-        return $accountList;
-    }
-
-    /**
-     * Generate facebook user token url
-     *
-     * @param Account $account
-     * @return string
-     */
-    public function generateUserTokenUrl(Account $account)
-    {
-        return sprintf(
-            'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=ads_management&response_type=token',
-            $account->getAppId(),
-            $account->getRedirectUri() . 'fb-token'
-        );
-    }
-
-    /**
-     * Generate access token (app)
-     *
-     * @param Account $account
-     * @return bool|string
-     */
-    public function generateAppToken(Account $account)
-    {
-
-        $token = file_get_contents(
-            sprintf(
-                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials',
-                $account->getAppId(),
-                $account->getAppSecret()
-            )
-        );
-
-        if (!substr_count($token, 'access_token=')) {
-            return false;
-        }
-
-        $token = str_replace('access_token=', '', $token);
-
-        return $token;
-    }
-
-    /**
-     * Get options
-     *
-     * @return OptionsInterface
-     */
-    protected function getOptions()
-    {
-        return $this->moduleOptions;
-    }
-
-    /**
-     * @return string
-     */
-    public function getScope()
-    {
-        return $this->scope;
-    }
-
-    /**
-     * @param string $scope
-     */
-    public function setScope($scope)
-    {
-        $this->scope = $scope;
+        return $account;
     }
 }
