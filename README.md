@@ -9,6 +9,45 @@ This package is an integration of [`facebook/facebook-php-ads-sdk`](https://gith
 ### Composer
 - Run `$ composer require nikolajlovenhardt/laravel-facebook-ads`
 
+## Examples
+
+### Client
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use LaravelFacebook\Clients\Facebook;
+
+class AdsController
+{
+    /** @var Facebook */
+    protected $facebookClient;
+
+    public function __construct(Facebook $facebookClient)
+    {
+        $this->facebookClient = $facebookClient;
+    }
+
+    /**
+     * Show ads
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function ads()
+    {
+        $client = $this->facebookClient;
+
+        $accountId = 'act_12345678';
+
+        return view('ads', [
+            'ads' => $client->account($accountId)->ads(),
+        ]);
+    }
+}
+```
+
 ## Documentation
 - [01 Getting started](docs/01 Getting started.md)
 - [02 Generate token](docs/02 Token.md)

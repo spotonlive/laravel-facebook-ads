@@ -8,6 +8,7 @@ use LaravelFacebookAds\Exceptions\MissingConfigurationException;
 use LaravelFacebookAds\Http\Controllers\TokenController;
 use LaravelFacebookAds\Options\ModuleOptions;
 use LaravelFacebookAds\Services\FacebookAdsService;
+use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
 
 class LaravelFacebookAdsProvider extends ServiceProvider
 {
@@ -39,6 +40,7 @@ class LaravelFacebookAdsProvider extends ServiceProvider
         $this->mergeConfig();
         $this->registerServices();
         $this->registerControllers();
+        $this->registerCommands();
     }
 
     /**
@@ -50,12 +52,6 @@ class LaravelFacebookAdsProvider extends ServiceProvider
             __DIR__ . '/../../config/config.php',
             'facebook-ads'
         );
-
-        // Register command
-        $this->commands([
-            Console\App\GenerateTokenCommand::class,
-            Console\User\GenerateTokenCommand::class,
-        ]);
     }
 
     /**
@@ -68,6 +64,16 @@ class LaravelFacebookAdsProvider extends ServiceProvider
          */
         $this->app->bind(FacebookAdsService::class, function () {
             return new FacebookAdsService($this->getModuleOptions());
+        });
+
+        /*
+         * Client: \LaravelFacebookAds\Clients\Facebook
+         */
+        $this->app->bind(Clients\Facebook::class, function (Application $app) {
+            /** @var FacebookAdsServiceInterface $facebookAdsService */
+            $facebookAdsService = $app->make(FacebookAdsService::class);
+
+            return new Clients\Facebook($facebookAdsService);
         });
     }
 
@@ -97,5 +103,16 @@ class LaravelFacebookAdsProvider extends ServiceProvider
         }
 
         return new ModuleOptions($config);
+    }
+
+    /**
+     * Register commands
+     */
+    protected function registerCommands()
+    {
+        $this->commands([
+            Console\App\GenerateTokenCommand::class,
+            Console\User\GenerateTokenCommand::class,
+        ]);
     }
 }

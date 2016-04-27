@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFacebookAds\Client;
+namespace LaravelFacebookAds\Clients;
 
 use FacebookAds\Cursor;
 use FacebookAds\Object\Ad;
