@@ -105,7 +105,6 @@ class FacebookAdsService implements FacebookAdsServiceInterface
      */
     public function generateAppToken(AccountInterface $account)
     {
-
         $token = file_get_contents(
             sprintf(
                 'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials',
@@ -121,6 +120,26 @@ class FacebookAdsService implements FacebookAdsServiceInterface
         $token = str_replace('access_token=', '', $token);
 
         return $token;
+    }
+
+    /**
+     * Convert access token to long-lived access token
+     *
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function accessTokenToLongLivedToken(AccountInterface $account)
+    {
+        $response = file_get_contents(
+            sprintf(
+                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=fb_exchange_token&fb_exchange_token=%s',
+                $account->getAppId(),
+                $account->getAppSecret(),
+                $account->getToken()
+            )
+        );
+
+        return $response;
     }
 
     /**
