@@ -56,6 +56,15 @@ interface FacebookAdsServiceInterface
      */
     public function generateAppToken(AccountInterface $account);
 
+
+    /**
+     * Convert access token to long-lived access token
+     *
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function accessTokenToLongLivedToken(AccountInterface $account);
+
     /**
      * Get scope for user access token
      *
