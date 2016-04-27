@@ -111,6 +111,7 @@ class LaravelFacebookAdsProvider extends ServiceProvider
     protected function registerCommands()
     {
         $this->commands([
+            Console\ConvertTokenCommand::class,
             Console\App\GenerateTokenCommand::class,
             Console\User\GenerateTokenCommand::class,
         ]);
