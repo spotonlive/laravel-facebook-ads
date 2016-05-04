@@ -38,7 +38,32 @@ class ConvertTokenCommand extends Command
 
         $this->line('Accounts:');
 
+        $account = null;
         $accounts = $facebookAdsService->getAccountList();
+
+        if (!$this->option('no-interaction')) {
+            $account = $this->promptAccount($accounts);
+        }
+
+        if (!$account) {
+            $account = reset($accounts);
+        }
+
+        // Generate token url
+        $response = $facebookAdsService->accessTokenToLongLivedToken($account);
+
+        $this->line('Request has finished with the following response:');
+        $this->line($response);
+    }
+
+    /**
+     * Prompt account
+     *
+     * @param array $accounts
+     * @return null|array
+     */
+    protected function promptAccount(array $accounts)
+    {
         $count = 1;
 
         foreach ($accounts as $name => $account) {
@@ -71,10 +96,6 @@ class ConvertTokenCommand extends Command
             $selectedAccount = $accounts[$accountId];
         }
 
-        // Generate token url
-        $response = $facebookAdsService->accessTokenToLongLivedToken($account);
-
-        $this->line('Request has finished with the following response:');
-        $this->line($response);
+        return $selectedAccount;
     }
 }
