@@ -10,7 +10,7 @@ You'll need to generate an access token to access the facebook ads api.
 
 ### User token
 
-1. Run `$ php artisan facebookads:user:generate-token` from your console
+1. Run `$ php artisan facebookads:user:generate-token {--scope=ads_read}` from your console
 2. Select the account you'd like to generate a token for
 3. Copy & paste the access token into your config `config/facebook-ads.php`
 
