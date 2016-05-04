@@ -5,6 +5,7 @@ namespace LaravelFacebookAds\Console\User;
 use Exception;
 use Illuminate\Console\Command;
 use LaravelFacebookAds\Services\FacebookAdsService;
+use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
 
 class GenerateTokenCommand extends Command
 {
@@ -13,7 +14,7 @@ class GenerateTokenCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'facebookads:user:generate-token';
+    protected $signature = 'facebookads:user:generate-token {--scope= : The scope}';
 
     /**
      * Description
@@ -22,14 +23,22 @@ class GenerateTokenCommand extends Command
      */
     protected $description = 'Generate a new app refresh token for Facebook Ads';
 
-    /**
-     * Fire command
-     *
-     * @param FacebookAdsService $facebookAdsService
-     * @return bool|void
-     */
-    public function fire(FacebookAdsService $facebookAdsService)
+    /** @var FacebookAdsServiceInterface */
+    protected $facebookService;
+
+    public function __construct(FacebookAdsService $facebookAdsService)
     {
+        parent::__construct();
+        $this->facebookService = $facebookAdsService;
+    }
+
+    /**
+     * Handle
+     */
+    public function handle()
+    {
+        $facebookAdsService = $this->facebookService;
+
         $accounts = $facebookAdsService->getAccountList();
 
         if (!count($accounts)) {
@@ -69,6 +78,13 @@ class GenerateTokenCommand extends Command
             }
 
             $selectedAccount = $accounts[$accountId];
+        }
+
+        // Check for scope
+        if ($scope = $this->option('scope')) {
+            if (!empty(trim($scope))) {
+                $facebookAdsService->setScope($scope);
+            }
         }
 
         // Generate token url
