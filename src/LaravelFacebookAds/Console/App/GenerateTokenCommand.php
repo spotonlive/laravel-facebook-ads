@@ -5,6 +5,7 @@ namespace LaravelFacebookAds\Console\App;
 use Exception;
 use Illuminate\Console\Command;
 use LaravelFacebookAds\Services\FacebookAdsService;
+use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
 
 class GenerateTokenCommand extends Command
 {
@@ -22,18 +23,35 @@ class GenerateTokenCommand extends Command
      */
     protected $description = 'Generate a new user token';
 
+    /** @var FacebookAdsServiceInterface */
+    protected $facebookAdsService;
+
     /**
-     * Fire command
+     * Construct
      *
      * @param FacebookAdsService $facebookAdsService
+     */
+    public function __construct(FacebookAdsService $facebookAdsService)
+    {
+        parent::__construct();
+
+        $this->facebookAdsService = $facebookAdsService;
+    }
+
+    /**
+     * Handle
+     *
      * @return bool|void
      */
-    public function fire(FacebookAdsService $facebookAdsService)
+    public function handle()
     {
+        $facebookAdsService = $this->facebookAdsService;
+
         $accounts = $facebookAdsService->getAccountList();
 
         if (!count($accounts)) {
-            return $this->error('Please insert some accounts in your configuration');
+            $this->error('Please insert some accounts in your configuration');
+            return false;
         }
 
         $this->line('Accounts:');
@@ -85,5 +103,7 @@ class GenerateTokenCommand extends Command
             'Access token: %s',
             $token
         ));
+
+        return true;
     }
 }

@@ -5,6 +5,7 @@ namespace LaravelFacebookAds\Console;
 use Exception;
 use Illuminate\Console\Command;
 use LaravelFacebookAds\Services\FacebookAdsService;
+use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
 
 class ConvertTokenCommand extends Command
 {
@@ -22,18 +23,35 @@ class ConvertTokenCommand extends Command
      */
     protected $description = 'Convert access token to long-lived token';
 
+    /** @var FacebookAdsServiceInterface */
+    protected $facebookAdsService;
+
     /**
-     * Fire command
+     * Construct
      *
      * @param FacebookAdsService $facebookAdsService
-     * @return bool|void
      */
-    public function fire(FacebookAdsService $facebookAdsService)
+    public function __construct(FacebookAdsService $facebookAdsService)
     {
+        parent::__construct();
+
+        $this->facebookAdsService = $facebookAdsService;
+    }
+
+    /**
+     * Handle
+     *
+     * @return bool
+     */
+    public function handle()
+    {
+        $facebookAdsService = $this->facebookAdsService;
+
         $accounts = $facebookAdsService->getAccountList();
 
         if (!count($accounts)) {
-            return $this->error('Please insert some accounts in your configuration');
+            $this->error('Please insert some accounts in your configuration');
+            return false;
         }
 
         $this->line('Accounts:');
@@ -54,6 +72,8 @@ class ConvertTokenCommand extends Command
 
         $this->line('Request has finished with the following response:');
         $this->line($response);
+
+        return true;
     }
 
     /**

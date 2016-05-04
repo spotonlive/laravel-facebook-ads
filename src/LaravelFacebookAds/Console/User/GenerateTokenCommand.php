@@ -26,9 +26,15 @@ class GenerateTokenCommand extends Command
     /** @var FacebookAdsServiceInterface */
     protected $facebookService;
 
+    /**
+     * Construct
+     *
+     * @param FacebookAdsService $facebookAdsService
+     */
     public function __construct(FacebookAdsService $facebookAdsService)
     {
         parent::__construct();
+
         $this->facebookService = $facebookAdsService;
     }
 
@@ -42,7 +48,8 @@ class GenerateTokenCommand extends Command
         $accounts = $facebookAdsService->getAccountList();
 
         if (!count($accounts)) {
-            return $this->error('Please insert some accounts in your configuration');
+            $this->error('Please insert some accounts in your configuration');
+            return false;
         }
 
         $this->line('Accounts:');
@@ -92,5 +99,7 @@ class GenerateTokenCommand extends Command
 
         $this->line('Open the following url in your browser, and copy the access token into your config:');
         $this->line($url);
+
+        return true;
     }
 }
