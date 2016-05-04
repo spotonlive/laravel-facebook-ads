@@ -91,9 +91,10 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     public function generateUserTokenUrl(AccountInterface $account)
     {
         return sprintf(
-            'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=ads_management&response_type=token',
+            'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=%s&response_type=token',
             $account->getAppId(),
-            $account->getRedirectUri() . 'fb-token'
+            $account->getRedirectUri() . 'fb-token',
+            $this->getScope()
         );
     }
 
