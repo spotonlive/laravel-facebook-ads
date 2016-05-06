@@ -2,6 +2,7 @@
 
 namespace LaravelFacebookAds\Services;
 
+use DateTime;
 use FacebookAds\Api;
 use LaravelFacebookAds\Auth\Account;
 use LaravelFacebookAds\Auth\AccountInterface;
@@ -9,6 +10,10 @@ use LaravelFacebookAds\Options\OptionsInterface;
 use LaravelFacebookAds\Exceptions\InvalidAccountException;
 use LaravelFacebookAds\Exceptions\InvalidAccountConfigurationException;
 
+/**
+ * Class FacebookAdsService
+ * @package LaravelFacebookAds\Services
+ */
 class FacebookAdsService implements FacebookAdsServiceInterface
 {
     /** @var OptionsInterface */
@@ -99,6 +104,107 @@ class FacebookAdsService implements FacebookAdsServiceInterface
     }
 
     /**
+     * Generate code url
+     *
+     * @param string $accessToken
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function generateCodeUrl($accessToken, AccountInterface $account)
+    {
+        return sprintf(
+            'https://graph.facebook.com/oauth/client_code?access_token=%s&client_secret=%s&redirect_uri=%s&client_id=%s',
+            $accessToken,
+            $account->getAppSecret(),
+            $account->getRedirectUri() . 'fb-token',
+            $account->getAppId()
+        );
+    }
+
+    /**
+     * Convert token to long-lived token
+     *
+     * @param string $accessToken
+     * @param AccountInterface $account
+     * @return bool|string
+     */
+    public function convertTokenToLongLivedToken($accessToken, AccountInterface $account)
+    {
+        $response = file_get_contents(
+            sprintf(
+                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=fb_exchange_token&fb_exchange_token=%s',
+                $account->getAppId(),
+                $account->getAppSecret(),
+                $accessToken
+            )
+        );
+
+        // Match token
+        preg_match('/access_token=(.*)&/', $response, $tokens);
+
+        if (!isset($tokens[1])) {
+            return false;
+        }
+
+        return $tokens[1];
+    }
+
+    /**
+     * Fetch access token from code
+     *
+     * @param string $code
+     * @param AccountInterface $account
+     * @return array|bool
+     */
+    public function fetchAccessTokenFromCode($code, AccountInterface $account)
+    {
+        $jsonResponse = file_get_contents(
+            sprintf(
+                'https://graph.facebook.com/oauth/access_token?code=%s&client_id=%s&redirect_uri=%s',
+                $code,
+                $account->getAppId(),
+                $account->getRedirectUri() . 'fb-token'
+            )
+        );
+
+        // JSON to array
+        $arrayResponse = json_decode($jsonResponse, true);
+
+        if (!isset($arrayResponse['access_token']) || !isset($arrayResponse['expires_in'])) {
+            return false;
+        }
+
+        $expireDate = new DateTime();
+        $expireDate->modify(sprintf('+%s seconds', $arrayResponse['expires_in']));
+
+        return [
+            'access_token' => $arrayResponse['access_token'],
+            'expires_in' => $expireDate
+        ];
+    }
+
+    /**
+     * Convert long-lived token to code
+     *
+     * @param string $longLivedAccessToken
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function convertLongLivedTokenToCode($longLivedAccessToken, AccountInterface $account)
+    {
+        $jsonResponse = file_get_contents($this->generateCodeUrl($longLivedAccessToken, $account));
+
+        // JSON to array
+        $arrayResponse = json_decode($jsonResponse, true);
+
+        if (!isset($arrayResponse['code'])) {
+            return false;
+        }
+
+        return $arrayResponse['code'];
+    }
+
+    /**
      * Generate access token (app)
      *
      * @param AccountInterface $account
@@ -121,56 +227,6 @@ class FacebookAdsService implements FacebookAdsServiceInterface
         $token = str_replace('access_token=', '', $token);
 
         return $token;
-    }
-
-    /**
-     * Convert access token to long-lived access token
-     *
-     * @param AccountInterface $account
-     * @return string
-     */
-    public function accessTokenToLongLivedToken(AccountInterface $account)
-    {
-        $response = file_get_contents(
-            sprintf(
-                'https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=fb_exchange_token&fb_exchange_token=%s',
-                $account->getAppId(),
-                $account->getAppSecret(),
-                $account->getToken()
-            )
-        );
-
-        return $response;
-    }
-
-    /**
-     * Get options
-     *
-     * @return OptionsInterface
-     */
-    protected function getOptions()
-    {
-        return $this->moduleOptions;
-    }
-
-    /**
-     * Get scope for user access token
-     *
-     * @return string
-     */
-    public function getScope()
-    {
-        return $this->scope;
-    }
-
-    /**
-     * Set scope for user access token
-     *
-     * @param string $scope
-     */
-    public function setScope($scope)
-    {
-        $this->scope = $scope;
     }
 
     /**
@@ -219,5 +275,35 @@ class FacebookAdsService implements FacebookAdsServiceInterface
         $account = $options->get('default');
 
         return $account;
+    }
+
+    /**
+     * Get options
+     *
+     * @return OptionsInterface
+     */
+    protected function getOptions()
+    {
+        return $this->moduleOptions;
+    }
+
+    /**
+     * Get scope for user access token
+     *
+     * @return string
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * Set scope for user access token
+     *
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
     }
 }

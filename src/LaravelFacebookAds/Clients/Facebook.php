@@ -4,9 +4,9 @@ namespace LaravelFacebookAds\Clients;
 
 use FacebookAds\Cursor;
 use FacebookAds\Object\Ad;
+use FacebookAds\Object\Campaign;
 use FacebookAds\Object\AdAccount;
 use FacebookAds\Object\AdPreview;
-use FacebookAds\Object\Campaign;
 use FacebookAds\Object\Fields\AdPreviewFields;
 use LaravelFacebookAds\Exceptions\NoAccountSelectedException;
 use LaravelFacebookAds\Services\FacebookAdsServiceInterface;

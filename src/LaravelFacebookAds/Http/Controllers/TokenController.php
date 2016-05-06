@@ -2,10 +2,14 @@
 
 namespace LaravelFacebookAds\Http\Controllers;
 
-use Illuminate\Routing\Controller as BaseController;
 use LaravelFacebookAds\Options\ModuleOptions;
 use LaravelFacebookAds\Options\OptionsInterface;
+use Illuminate\Routing\Controller as BaseController;
 
+/**
+ * Class TokenController
+ * @package LaravelFacebookAds\Http\Controllers
+ */
 class TokenController extends BaseController
 {
     /** @var ModuleOptions */

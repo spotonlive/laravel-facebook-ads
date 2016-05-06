@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Exceptions;
 
+/**
+ * Class InvalidAccountConfigurationException
+ * @package LaravelFacebookAds\Exceptions
+ */
 class InvalidAccountConfigurationException extends Exception
 {
     /**

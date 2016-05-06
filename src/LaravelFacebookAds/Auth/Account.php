@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Auth;
 
+/**
+ * Class Account
+ * @package LaravelFacebookAds\Auth
+ */
 class Account implements AccountInterface
 {
     /** @var string */

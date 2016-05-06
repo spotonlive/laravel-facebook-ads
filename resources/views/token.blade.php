@@ -1,6 +1,6 @@
 <strong>Your facebook user access token:</strong><br />
 
-<em>Copy this token into config/facebook-ads.php</em>
+<em>Copy this token back into the console</em>
 
 <hr />
 

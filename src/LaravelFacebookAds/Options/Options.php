@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Options;
 
+/**
+ * Class Options
+ * @package LaravelFacebookAds\Options
+ */
 class Options implements OptionsInterface
 {
     /** @var array */

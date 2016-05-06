@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Exceptions;
 
+/**
+ * Class MissingConfigurationException
+ * @package LaravelFacebookAds\Exceptions
+ */
 class MissingConfigurationException extends Exception
 {
     /**

@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Options;
 
+/**
+ * Interface OptionsInterface
+ * @package LaravelFacebookAds\Options
+ */
 interface OptionsInterface
 {
     public function __construct(array $options = []);

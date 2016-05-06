@@ -2,11 +2,17 @@
 
 namespace LaravelFacebookAds\Console\User;
 
+use Config;
+use DateTime;
 use Exception;
 use Illuminate\Console\Command;
 use LaravelFacebookAds\Services\FacebookAdsService;
 use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
 
+/**
+ * Class GenerateTokenCommand
+ * @package LaravelFacebookAds\Console\User
+ */
 class GenerateTokenCommand extends Command
 {
     /**
@@ -14,7 +20,7 @@ class GenerateTokenCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'facebookads:user:generate-token {--scope= : The scope}';
+    protected $signature = 'facebookads:user:generate-token {--scope= : Access token scope}';
 
     /**
      * Description
@@ -26,15 +32,9 @@ class GenerateTokenCommand extends Command
     /** @var FacebookAdsServiceInterface */
     protected $facebookService;
 
-    /**
-     * Construct
-     *
-     * @param FacebookAdsService $facebookAdsService
-     */
     public function __construct(FacebookAdsService $facebookAdsService)
     {
         parent::__construct();
-
         $this->facebookService = $facebookAdsService;
     }
 
@@ -48,9 +48,10 @@ class GenerateTokenCommand extends Command
         $accounts = $facebookAdsService->getAccountList();
 
         if (!count($accounts)) {
-            $this->error('Please insert some accounts in your configuration');
-            return false;
+            return $this->error('Please insert some accounts in your configuration');
         }
+
+        // Accounts
 
         $this->line('Accounts:');
 
@@ -97,9 +98,42 @@ class GenerateTokenCommand extends Command
         // Generate token url
         $url = $facebookAdsService->generateUserTokenUrl($selectedAccount);
 
-        $this->line('Open the following url in your browser, and copy the access token into your config:');
+        $this->line('Open the following url in your browser:');
         $this->line($url);
 
-        return true;
+        $accessToken = $this->ask('Insert your access token:');
+
+        // Convert token to long-lived
+        if (!$longLivedToken = $facebookAdsService->convertTokenToLongLivedToken($accessToken, $selectedAccount)) {
+            $this->error('Error: The token could not be converted to a long-lived token');
+            return false;
+        }
+
+        // Fetch code from token
+        if (!$code = $facebookAdsService->convertLongLivedTokenToCode($longLivedToken, $selectedAccount)) {
+            $this->error('Error: Could not fetch code from long-lived access token');
+            return false;
+        }
+
+        // Fetch 60 days access token
+        if (!$data = $facebookAdsService->fetchAccessTokenFromCode($code, $selectedAccount)) {
+            $this->error('Error: Could not fetch access token from code');
+            return false;
+        }
+
+        $accessToken = $data['access_token'];
+
+        /** @var DateTime $expireDate */
+        $expireDate = $data['expires_in'];
+
+        $this->line('Insert the following access token into your config/facebook-ads.php config file:');
+        $this->info($accessToken);
+
+        $this->warn(
+            sprintf(
+                'Your access token expires %s',
+                $expireDate->format('g:ia \o\n l jS F Y')
+            )
+        );
     }
 }

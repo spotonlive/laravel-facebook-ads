@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Exceptions;
 
+/**
+ * Class NoAccountSelectedException
+ * @package LaravelFacebookAds\Exceptions
+ */
 class NoAccountSelectedException extends Exception
 {
     /**

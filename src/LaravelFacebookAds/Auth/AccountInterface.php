@@ -2,6 +2,10 @@
 
 namespace LaravelFacebookAds\Auth;
 
+/**
+ * Interface AccountInterface
+ * @package LaravelFacebookAds\Auth
+ */
 interface AccountInterface
 {
     /**

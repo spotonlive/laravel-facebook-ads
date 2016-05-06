@@ -4,12 +4,16 @@ namespace LaravelFacebookAds;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use LaravelFacebookAds\Exceptions\MissingConfigurationException;
-use LaravelFacebookAds\Http\Controllers\TokenController;
 use LaravelFacebookAds\Options\ModuleOptions;
 use LaravelFacebookAds\Services\FacebookAdsService;
+use LaravelFacebookAds\Http\Controllers\TokenController;
 use LaravelFacebookAds\Services\FacebookAdsServiceInterface;
+use LaravelFacebookAds\Exceptions\MissingConfigurationException;
 
+/**
+ * Class LaravelFacebookAdsProvider
+ * @package LaravelFacebookAds
+ */
 class LaravelFacebookAdsProvider extends ServiceProvider
 {
     /**
@@ -59,16 +63,12 @@ class LaravelFacebookAdsProvider extends ServiceProvider
      */
     protected function registerServices()
     {
-        /*
-         * Service: \LaravelFacebookAds\Services\FacebookAdsService
-         */
+        // Service: \LaravelFacebookAds\Services\FacebookAdsService
         $this->app->bind(FacebookAdsService::class, function () {
             return new FacebookAdsService($this->getModuleOptions());
         });
 
-        /*
-         * Client: \LaravelFacebookAds\Clients\Facebook
-         */
+        // Client: \LaravelFacebookAds\Clients\Facebook
         $this->app->bind(Clients\Facebook::class, function (Application $app) {
             /** @var FacebookAdsServiceInterface $facebookAdsService */
             $facebookAdsService = $app->make(FacebookAdsService::class);
@@ -82,12 +82,21 @@ class LaravelFacebookAdsProvider extends ServiceProvider
      */
     protected function registerControllers()
     {
-        /*
-         * Service: \LaravelFacebookAds\Http\Controllers\TokenController
-         */
+        // Service: \LaravelFacebookAds\Http\Controllers\TokenController
         $this->app->bind(TokenController::class, function () {
             return new TokenController($this->getModuleOptions());
         });
+    }
+
+    /**
+     * Register commands
+     */
+    protected function registerCommands()
+    {
+        $this->commands([
+            Console\App\GenerateTokenCommand::class,
+            Console\User\GenerateTokenCommand::class,
+        ]);
     }
 
     /**
@@ -103,17 +112,5 @@ class LaravelFacebookAdsProvider extends ServiceProvider
         }
 
         return new ModuleOptions($config);
-    }
-
-    /**
-     * Register commands
-     */
-    protected function registerCommands()
-    {
-        $this->commands([
-            Console\ConvertTokenCommand::class,
-            Console\App\GenerateTokenCommand::class,
-            Console\User\GenerateTokenCommand::class,
-        ]);
     }
 }

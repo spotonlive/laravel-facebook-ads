@@ -4,12 +4,19 @@ namespace LaravelFacebookAds\Services;
 
 use FacebookAds\Api;
 use LaravelFacebookAds\Auth\AccountInterface;
-use LaravelFacebookAds\Exceptions\InvalidAccountConfigurationException;
-use LaravelFacebookAds\Exceptions\InvalidAccountException;
 use LaravelFacebookAds\Options\OptionsInterface;
+use LaravelFacebookAds\Exceptions\InvalidAccountException;
+use LaravelFacebookAds\Exceptions\InvalidAccountConfigurationException;
 
+/**
+ * Interface FacebookAdsServiceInterface
+ * @package LaravelFacebookAds\Services
+ */
 interface FacebookAdsServiceInterface
 {
+    /**
+     * @param OptionsInterface $moduleOptions
+     */
     public function __construct(OptionsInterface $moduleOptions);
 
     /**
@@ -49,21 +56,40 @@ interface FacebookAdsServiceInterface
     public function generateUserTokenUrl(AccountInterface $account);
 
     /**
-     * Generate new app access token
+     * Generate code url
      *
-     * @param AccountInterface $account
-     * @return bool|string
-     */
-    public function generateAppToken(AccountInterface $account);
-
-
-    /**
-     * Convert access token to long-lived access token
-     *
+     * @param string $accessToken
      * @param AccountInterface $account
      * @return string
      */
-    public function accessTokenToLongLivedToken(AccountInterface $account);
+    public function generateCodeUrl($accessToken, AccountInterface $account);
+
+    /**
+     * Convert token to long-lived token
+     *
+     * @param string $accessToken
+     * @param AccountInterface $account
+     * @return bool|string
+     */
+    public function convertTokenToLongLivedToken($accessToken, AccountInterface $account);
+
+    /**
+     * Fetch access token from code
+     *
+     * @param string $code
+     * @param AccountInterface $account
+     * @return array|bool
+     */
+    public function fetchAccessTokenFromCode($code, AccountInterface $account);
+
+    /**
+     * Convert long-lived token to code
+     *
+     * @param string $longLivedAccessToken
+     * @param AccountInterface $account
+     * @return string
+     */
+    public function convertLongLivedTokenToCode($longLivedAccessToken, AccountInterface $account);
 
     /**
      * Get scope for user access token
