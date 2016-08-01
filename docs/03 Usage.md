@@ -19,16 +19,19 @@ class Controller
         $this->facebookAdsService = $facebookAdsService;
     }
 
+    /*
+     * Create an instance using the service
+     */
     public function example()
     {
-        $facebookInstance = $this->facebookAdsService->instance();
+        $instance = $this->facebookAdsService->instance();
     }
 }
 ```
 
 ## Facade
 
-Access the FacebookAdsService using the facade:
+Create an instance using the facade
 
 ```php
 FacebookAds::instance()
