@@ -140,13 +140,14 @@ class FacebookAdsService implements FacebookAdsServiceInterface
         );
 
         // Match token
-        preg_match('/access_token=(.*)&/', $response, $tokens);
 
-        if (!isset($tokens[1])) {
+        if (!substr_count($response, 'access_token=')) {
             return false;
         }
 
-        return $tokens[1];
+        $token = str_replace('access_token=', '', $response);
+
+        return $token;
     }
 
     /**
@@ -170,16 +171,20 @@ class FacebookAdsService implements FacebookAdsServiceInterface
         // JSON to array
         $arrayResponse = json_decode($jsonResponse, true);
 
-        if (!isset($arrayResponse['access_token']) || !isset($arrayResponse['expires_in'])) {
+        if (!isset($arrayResponse['access_token'])) {
             return false;
         }
 
-        $expireDate = new DateTime();
-        $expireDate->modify(sprintf('+%s seconds', $arrayResponse['expires_in']));
+        $expire = null;
+
+        if (isset($arrayResponse['expires_in'])) {
+            $expire = new DateTime();
+            $expire->modify(sprintf('+%s seconds', $arrayResponse['expires_in']));
+        }
 
         return [
             'access_token' => $arrayResponse['access_token'],
-            'expires_in' => $expireDate
+            'expires_in' => $expire,
         ];
     }
 

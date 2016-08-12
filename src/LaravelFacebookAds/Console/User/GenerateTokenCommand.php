@@ -129,11 +129,13 @@ class GenerateTokenCommand extends Command
         $this->line('Insert the following access token into your config/facebook-ads.php config file:');
         $this->info($accessToken);
 
-        $this->warn(
-            sprintf(
-                'Your access token expires %s',
-                $expireDate->format('g:ia \o\n l jS F Y')
-            )
-        );
+        if (!is_null($expireDate)) {
+            $this->warn(
+                sprintf(
+                    'Your access token expires %s',
+                    $expireDate->format('g:ia \o\n l jS F Y')
+                )
+            );
+        }
     }
 }
