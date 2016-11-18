@@ -24,7 +24,7 @@ return [
             /*
              * Your domain, ex. http://demo.com/ with trailing slash
              */
-            'redirectUri' => 'http://spotonlive.dev/',
+            'redirectUri' => '',
 
             /*
              * Your app- or user access token
