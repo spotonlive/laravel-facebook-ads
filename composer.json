@@ -36,5 +36,15 @@
     "psr-4": {
       "LaravelFacebookAdsTests\\": "tests/"
     }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LaravelFacebookAds\\LaravelFacebookAdsProvider"
+      ],
+      "aliases": {
+        "FacebookAds": "LaravelFacebookAds\\Facades\\FacebookAds"
+      }
+    }
   }
 }
