@@ -43,7 +43,7 @@
         "LaravelFacebookAds\\LaravelFacebookAdsProvider"
       ],
       "aliases": {
-        "FacebookAds": "LaravelFacebookAds\\Facades\FacebookAds"
+        "FacebookAds": "LaravelFacebookAds\\Facades\\FacebookAds"
       }
     }
   }
