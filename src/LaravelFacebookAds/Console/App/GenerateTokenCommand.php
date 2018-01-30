@@ -25,6 +25,15 @@ class GenerateTokenCommand extends Command
      * @var string
      */
     protected $description = 'Generate a new user token';
+    
+    
+       /**
+     * @param FacebookAdsService $facebookAdsService
+     */
+    public function handle(FacebookAdsService $facebookAdsService)
+    {
+        $this->fire($facebookAdsService);
+    }
 
     /**
      * Fire command
