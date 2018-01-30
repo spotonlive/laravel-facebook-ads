@@ -41,7 +41,7 @@ class GenerateTokenCommand extends Command
      * @param FacebookAdsService $facebookAdsService
      * @return bool|void
      */
-    public function fire($facebookAdsService)
+    public function fire(FacebookAdsService $facebookAdsService)
     {
         $accounts = $facebookAdsService->getAccountList();
 
