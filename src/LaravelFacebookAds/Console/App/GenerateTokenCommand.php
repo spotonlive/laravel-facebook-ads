@@ -25,6 +25,15 @@ class GenerateTokenCommand extends Command
      * @var string
      */
     protected $description = 'Generate a new user token';
+    
+    
+       /**
+     * @param FacebookAdsService $facebookAdsService
+     */
+    public function handle(FacebookAdsService $facebookAdsService)
+    {
+        $this->fire($facebookAdsService);
+    }
 
     /**
      * Fire command
@@ -32,7 +41,7 @@ class GenerateTokenCommand extends Command
      * @param FacebookAdsService $facebookAdsService
      * @return bool|void
      */
-    public function fire(FacebookAdsService $facebookAdsService)
+    public function fire($facebookAdsService)
     {
         $accounts = $facebookAdsService->getAccountList();
 
