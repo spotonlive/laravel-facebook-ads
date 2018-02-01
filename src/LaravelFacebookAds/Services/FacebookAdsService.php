@@ -225,11 +225,11 @@ class FacebookAdsService implements FacebookAdsServiceInterface
             )
         );
 
-        if (!substr_count($token, 'access_token=')) {
+        if (!substr_count($token, 'access_token')) {
             return false;
         }
 
-        $token = str_replace('access_token=', '', $token);
+        $token = str_replace('"access_token":', '', $token);
 
         return $token;
     }
