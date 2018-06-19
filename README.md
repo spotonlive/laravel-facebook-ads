@@ -47,6 +47,6 @@ class AdsController
 ```
 
 ## Documentation
-- [1) Getting started](docs/01 Getting started.md)
-- [2) Generate token](docs/02 Token.md)
-- [3) Usage](docs/03 Usage.md)
+- [1 Getting started](docs/01 Getting started.md)
+- [2 Generate token](docs/02 Token.md)
+- [3 Usage](docs/03 Usage.md)
