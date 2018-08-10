@@ -1,5 +1,5 @@
 {
-  "name": "nikolajlovenhardt/laravel-facebook-ads",
+  "name": "spotonlive/laravel-facebook-ads",
   "type": "library",
   "description": "Facebook integration for Laravel",
   "keywords": [
@@ -7,7 +7,7 @@
     "ads",
     "facebook"
   ],
-  "homepage": "https://github.com/nikolajlovenhardt/laravel-facebook-ads",
+  "homepage": "https://github.com/spotonlive/laravel-facebook-ads",
   "license": "MIT",
   "authors": [
     {
