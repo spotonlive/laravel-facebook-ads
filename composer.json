@@ -19,7 +19,7 @@
   "require": {
     "php": ">=5.5.0",
     "laravel/framework": "5.*",
-    "facebook/php-ads-sdk": "^5.0.5"
+    "facebook/php-ads-sdk": "^6.0.5"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
